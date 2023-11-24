@@ -18,6 +18,7 @@ const AddTask = ({ tasks, setTasks }) => {
     const [day, setDay] = useState(1);
     const [Month, setMonth] = useState(1);
     const [year, setYear] = useState(2023);
+    const [catrgoties, setCatrgoties] = useState([]);
     // const TasksContainer
     const navigator = useNavigate();
 
@@ -27,8 +28,9 @@ const AddTask = ({ tasks, setTasks }) => {
         console.log("form data :", title, description, day, Month, year);
         let dueDate = new Date(year, Month - 1, day);
         let task = {
-            title, description, dueDate
+            title, description, dueDate, categories: catrgoties
         };
+        console.log("ASD ",task);
         let _token = getData('token');
         await fetch("http://localhost:8080/tasks/creae-task", {
             method: "POST",
@@ -59,6 +61,8 @@ const AddTask = ({ tasks, setTasks }) => {
     let yearList = [...Array(30).keys()].map(i => i + 2000).map(i => {
         return <MenuItem value={i} key={i}>{i}</MenuItem>
     });
+    let Cats = ["Work", "Study", "Sport", "Other"];
+    let CategoriesList = Cats.map(ele => <MenuItem value={ele} key={ele}>{ele}</MenuItem>)
 
     return (
         <div>
@@ -135,6 +139,22 @@ const AddTask = ({ tasks, setTasks }) => {
                                 label="Age"
                             >
                                 {yearList}
+                            </Select>
+                        </FormControl>
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
+                            <InputLabel id="demo-simple-select-standard-label">Categories</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-standard-label"
+                                id="demo-simple-select-standard"
+                                value={catrgoties}
+                                multiple
+                                onChange={e => {
+                                    console.log("Cx", e.target.value);
+                                    setCatrgoties(e.target.value)
+                                }}
+                                label="Categories"
+                            >
+                                {CategoriesList}
                             </Select>
                         </FormControl>
                         <TextField

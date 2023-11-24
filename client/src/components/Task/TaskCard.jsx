@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import './TaskCard.css';
 
 
-const TaskCard = ({ tasks, setTasks, id, title, dueDate, description, isCompleted }) => {
+const TaskCard = ({ tasks, setTasks, id, title, dueDate, description, isCompleted, Catrgoties }) => {
     let navigator = useNavigate();
     const [editDialog, setEditDialog] = useState(false);
     const [_title, setTitle] = useState(title);
@@ -20,11 +20,12 @@ const TaskCard = ({ tasks, setTasks, id, title, dueDate, description, isComplete
     const [day, setDay] = useState(dueDate?.split('T')[0]?.split('-')[2]);
     const [Month, setMonth] = useState(dueDate?.split('T')[0]?.split('-')[1]);
     const [year, setYear] = useState(dueDate?.split('T')[0]?.split('-')[0]);
+    const [catrgoties, setCatrgoties] = useState(Catrgoties);
     const handleChange = async () => {
         let _token = getData('token');
         await fetch(`http://localhost:8080/tasks/edit-task/${id}`, {
             method: "PUT",
-            body: JSON.stringify({ isCompleted: isCompleted ? false : true }),
+            body: JSON.stringify({ isCompleted: isCompleted ? false : true,categories: catrgoties }),
             headers: {
                 Authorization: `Bearer ${_token}`,
                 "Content-Type": "application/json",
@@ -62,7 +63,7 @@ const TaskCard = ({ tasks, setTasks, id, title, dueDate, description, isComplete
         e.preventDefault();
         let dueDate = new Date(year, Month - 1, day);
         let task = {
-            title: _title, description: _description, dueDate
+            title: _title, description: _description, dueDate, categories: catrgoties
         };
         let _token = getData('token');
         let url = `http://localhost:8080/tasks/edit-task/${id}`;
@@ -95,6 +96,9 @@ const TaskCard = ({ tasks, setTasks, id, title, dueDate, description, isComplete
     let yearList = [...Array(30).keys()].map(i => i + 2000).map(i => {
         return <MenuItem value={i} key={i}>{i}</MenuItem>
     });
+    let Cats = ["Work", "Study", "Sport", "Other"];
+    let CategoriesList = Cats.map(ele => <MenuItem value={ele} key={ele}>{ele}</MenuItem>)
+
 
     return (
         <>
@@ -152,6 +156,22 @@ const TaskCard = ({ tasks, setTasks, id, title, dueDate, description, isComplete
                             {yearList}
                         </Select>
                     </FormControl>
+                    <FormControl variant="standard" sx={{ m: 1, minWidth: 200 }}>
+                        <InputLabel id="demo-simple-select-standard-label">Categories</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-standard-label"
+                            id="demo-simple-select-standard"
+                            value={catrgoties}
+                            multiple
+                            onChange={e => {
+                                console.log("Cx", e.target.value);
+                                setCatrgoties(e.target.value)
+                            }}
+                            label="Categories"
+                        >
+                            {CategoriesList}
+                        </Select>
+                    </FormControl>
                     <TextField
                         margin='normal'
                         required
@@ -193,10 +213,7 @@ const TaskCard = ({ tasks, setTasks, id, title, dueDate, description, isComplete
                     </Typography>
                 </CardContent>
                 <Stack direction="row" spacing={1}>
-                    <Chip label="primary" color="primary" />
-                    <Chip label="success" color="success" />
-                    <Chip label="secondary" color="secondary" />
-                    <Chip label="warning" color="warning" />
+                    {(Catrgoties||[])?.map(cat => <Chip key={cat} label={cat} color="secondary" />)}
                 </Stack>
                 <CardActions disableSpacing style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0' }}>
                     <Container style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

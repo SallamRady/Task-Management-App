@@ -19,6 +19,9 @@ const taskSchema = new Schema(
             type: Boolean,
             default: false
         },
+        categories: {
+            type: [String],
+        },
         creator: {
             type: mongoose.Types.ObjectId,
             ref: 'User',
