@@ -3,7 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
+import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -43,7 +43,7 @@ const RegisterPage = () => {
                 <Typography component="h1" variant="h5">
                     Sign up
                 </Typography>
-                <Box component="form" Validate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -102,7 +102,7 @@ const RegisterPage = () => {
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link href="#" variant="body2">
+                            <Link to="/" style={{color:'#1976d2'}} variant="body2">
                                 Already have an account? Sign in
                             </Link>
                         </Grid>
