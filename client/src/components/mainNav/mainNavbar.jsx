@@ -4,10 +4,17 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
+import MarkunreadRoundedIcon from '@mui/icons-material/MarkunreadRounded';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 
 export default function MainNavbar(Props) {
     // define nav items
-    const navItems = ['Sign In'];
+    const navItems = [
+        { icon: <NotificationsRoundedIcon />, alt: "Notifications" },
+        { icon: <MarkunreadRoundedIcon />, alt: "messages" },
+        { icon: <LogoutRoundedIcon />, alt: "Logout" },
+    ];
 
     return (
         <AppBar component="nav">
@@ -21,8 +28,8 @@ export default function MainNavbar(Props) {
                 </Typography>
                 <Box sx={{ display: { sm: 'block' } }}>
                     {navItems.map((item) => (
-                        <Button key={item} sx={{ color: '#fff' }}>
-                            {item}
+                        <Button key={item.alt} title={item.alt} sx={{ color: '#fff' }}>
+                            {item.icon}
                         </Button>
                     ))}
                 </Box>
