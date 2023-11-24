@@ -1,0 +1,15 @@
+#EditTask{
+    width: 90%;
+    height: 80vh;
+    background-color: #fff;
+    position: fixed;
+    z-index: 10;
+    top: 15%;
+    left: 5%;
+    box-shadow: 2px 2px 3px 3px #80808087;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}

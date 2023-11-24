@@ -3,7 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -18,11 +18,27 @@ const RegisterPage = () => {
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    let navigator = useNavigate();
 
     // methods.
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         console.log("form data :", email, password, firstName, lastName);
+        await fetch('http://localhost:8080/auth/signup', {
+            method: 'POST',
+            body: JSON.stringify({ name: firstName + ' ' + lastName, email, password }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => {
+            if (res.ok) {
+                navigator("/");
+            } else {
+                alert("Enter valid data please.");
+            }
+        }).catch(err => {
+            console.log("Error in SignUp ", err);
+        });
     };
 
     // return component view.
@@ -102,7 +118,7 @@ const RegisterPage = () => {
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link to="/" style={{color:'#1976d2'}} variant="body2">
+                            <Link to="/" style={{ color: '#1976d2' }} variant="body2">
                                 Already have an account? Sign in
                             </Link>
                         </Grid>

@@ -12,11 +12,7 @@ const User = require("../models/user.model");
  * @returns tasks in json format
  */
 module.exports.getTasks = (req, res, next) => {
-    let page = req.query.page || 1;
-    const ITEMS_IN_PAGE = 10;
-    Task.find()
-        .skip((page - 1) * ITEMS_IN_PAGE)
-        .limit(ITEMS_IN_PAGE)
+    Task.find({ creator: req.userId })
         .then((tasks) => {
             return res.status(200).json({
                 tasks: tasks,
@@ -124,7 +120,7 @@ module.exports.editTask = (req, res, next) => {
     }
 
     let { id } = req.params;
-    let { title, dueDate, description } = req.body;
+    let { title, dueDate, description, isCompleted } = req.body;
     Task.findById(id)
         .then((task) => {
             if (!task) {
@@ -138,6 +134,8 @@ module.exports.editTask = (req, res, next) => {
                 task.description = description;
             if (dueDate)
                 task.dueDate = dueDate;
+            if (isCompleted == true || isCompleted == false)
+                task.isCompleted = isCompleted;
             return task.save();
         })
         .then((task) => {
