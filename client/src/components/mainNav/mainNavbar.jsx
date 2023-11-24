@@ -5,15 +5,29 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
-import MarkunreadRoundedIcon from '@mui/icons-material/MarkunreadRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import { useState, useEffect } from 'react';
+import { getData } from '../../utils/storage';
+import { useNavigate } from 'react-router-dom';
 
-export default function MainNavbar(Props) {
+export default function MainNavbar({ logout }) {
+    const [userName, setUserName] = useState('');
+    let navigator = useNavigate();
+    useEffect(() => {
+        let _userName = getData('userName');
+        console.log("_userName", _userName);
+        setUserName(_userName)
+    }, []);
+    
+    const handleLogout = () => {
+        logout();
+        navigator("/")
+    }
     // define nav items
     const navItems = [
-        { icon: <NotificationsRoundedIcon />, alt: "Notifications" },
-        { icon: <MarkunreadRoundedIcon />, alt: "messages" },
-        { icon: <LogoutRoundedIcon />, alt: "Logout" },
+        { icon: userName, alt: userName, action: console.log("logged") },
+        { icon: <NotificationsRoundedIcon />, alt: "Notifications", action: console.log("is-auth") },
+        { icon: <LogoutRoundedIcon />, alt: "Logout", action: handleLogout },
     ];
 
     return (
@@ -28,7 +42,7 @@ export default function MainNavbar(Props) {
                 </Typography>
                 <Box sx={{ display: { sm: 'block' } }}>
                     {navItems.map((item) => (
-                        <Button key={item.alt} title={item.alt} sx={{ color: '#fff' }}>
+                        <Button key={item.alt} title={item.alt} sx={{ color: '#fff' }} onClick={item.action}>
                             {item.icon}
                         </Button>
                     ))}

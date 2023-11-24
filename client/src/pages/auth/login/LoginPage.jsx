@@ -10,19 +10,34 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Copyright from '../../../components/Copyright/Copyright';
+import { connect } from 'react-redux';
+import { jwtDecode } from "jwt-decode";
 
-
-export default function LoginPage() {
+const LoginPage = ({ login }) => {
     // declaration variables.
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigator = useNavigate();
 
     // methods.
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log("form data :", email, password);
-        navigator('/home');
+        let _token;
+        await fetch('http://localhost:8080/auth/signin', {
+            method: 'POST',
+            body: JSON.stringify({ email, password }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json()).then(data => {
+            _token = data?.token;
+            const decoded = jwtDecode(_token);
+            login({ ...decoded, token: _token });
+        }).then(res => {
+            navigator('/home');
+        }).catch(err => {
+            console.log("Error in login page : ", err)
+        });
     };
 
     // return component view.
@@ -87,3 +102,20 @@ export default function LoginPage() {
         </Container>
     );
 }
+
+const mapStateToProps = (state) => {
+    return {
+        token: state.auth.token,
+        userId: state.auth.id,
+        userName: state.auth.userName,
+        email: state.auth.email,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        login: (incommingData) => dispatch({ type: 'LOGIN', data: incommingData }),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

@@ -97,7 +97,7 @@ module.exports.signIn = (req, res, next) => {
                 }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
                 return res.status(200).json({ token: token, userId: userDoc._id.toString() });
-            });
+            }).catch((err) => next(err));
         })
         .catch((err) => next(err));
 };

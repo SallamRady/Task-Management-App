@@ -15,6 +15,10 @@ const taskSchema = new Schema(
             type: Date,
             required: true,
         },
+        isCompleted: {
+            type: Boolean,
+            default: false
+        },
         creator: {
             type: mongoose.Types.ObjectId,
             ref: 'User',

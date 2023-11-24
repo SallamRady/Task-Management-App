@@ -4,25 +4,61 @@ import clsx from 'clsx';
 import { styled, Box } from '@mui/system';
 import { Modal as BaseModal } from '@mui/base/Modal';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import { Button, Grid, TextField } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { getData } from '../../utils/storage';
 
-const AddTask = () => {
+const AddTask = ({ tasks, setTasks }) => {
     // declaration variables.
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [title, setTitle] = useState('');
-    const [dueDate, setDueDate] = useState(new Date());
     const [description, setDescription] = useState('');
+    const [day, setDay] = useState(1);
+    const [Month, setMonth] = useState(1);
+    const [year, setYear] = useState(2023);
+    // const TasksContainer
     const navigator = useNavigate();
 
     // methods.
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log("form data :", title, description);
-        navigator('/home');
+        console.log("form data :", title, description, day, Month, year);
+        let dueDate = new Date(year, Month - 1, day);
+        let task = {
+            title, description, dueDate
+        };
+        let _token = getData('token');
+        await fetch("http://localhost:8080/tasks/creae-task", {
+            method: "POST",
+            body: JSON.stringify(task),
+            headers: {
+                Authorization: `Bearer ${_token}`,
+                "Content-Type": "application/json",
+            },
+        }).then(res => res.json()).then(data => {
+            console.log("Tasks Data:", data);
+            tasks.push({
+                ...data?.task
+            });
+            navigator("/home");
+            setTasks(tasks)
+            setOpen(false);
+        }).catch(err => {
+            console.log("Error in fetch items:", err);
+        });
     };
+
+    let dayList = [...Array(31).keys()].map(i => i + 1).map(i => {
+        return <MenuItem value={i} key={i}>{i}</MenuItem>
+    });
+    let monthList = [...Array(12).keys()].map(i => i + 1).map(i => {
+        return <MenuItem value={i} key={i}>{i}</MenuItem>
+    });
+    let yearList = [...Array(30).keys()].map(i => i + 2000).map(i => {
+        return <MenuItem value={i} key={i}>{i}</MenuItem>
+    });
 
     return (
         <div>
@@ -64,6 +100,43 @@ const AddTask = () => {
                             autoFocus
                             onChange={e => setTitle(e.target.value)}
                         />
+                        <InputLabel id="demo-simple-select-standard-label">Due Date:</InputLabel>
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 90 }}>
+                            <InputLabel id="demo-simple-select-standard-label">Day</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-standard-label"
+                                id="demo-simple-select-standard"
+                                value={day}
+                                onChange={e => setDay(e.target.value)}
+                                label="Age"
+                            >
+                                {dayList}
+                            </Select>
+                        </FormControl>
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 90 }}>
+                            <InputLabel id="demo-simple-select-standard-label">Month</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-standard-label"
+                                id="demo-simple-select-standard"
+                                value={Month}
+                                onChange={e => setMonth(e.target.value)}
+                                label="Age"
+                            >
+                                {monthList}
+                            </Select>
+                        </FormControl>
+                        <FormControl variant="standard" sx={{ m: 1, minWidth: 90 }}>
+                            <InputLabel id="demo-simple-select-standard-label">Year</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-standard-label"
+                                id="demo-simple-select-standard"
+                                value={year}
+                                onChange={e => setYear(e.target.value)}
+                                label="Age"
+                            >
+                                {yearList}
+                            </Select>
+                        </FormControl>
                         <TextField
                             margin='normal'
                             required
@@ -80,15 +153,8 @@ const AddTask = () => {
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Sign In
+                            Add
                         </Button>
-                        <Grid container>
-                            <Grid item>
-                                <Link to="/signUp" style={{ color: '#1976d2' }} variant="body2">
-                                    {"Don't have an account? Sign Up"}
-                                </Link>
-                            </Grid>
-                        </Grid>
                     </Box>
                 </ModalContent>
             </Modal>
