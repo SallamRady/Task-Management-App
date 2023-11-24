@@ -8,6 +8,7 @@ const TasksList = ({ tasks, setTasks }) => {
             id={task?._id}
             title={task?.title}
             tasks={tasks}
+            Catrgoties={task?.categories}
             setTasks={setTasks}
             description={task?.description}
             dueDate={task?.dueDate}

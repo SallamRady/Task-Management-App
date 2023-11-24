@@ -42,10 +42,10 @@ module.exports.createTask = (req, res, next) => {
         error.content = errors;
         throw error;
     }
-    let { title, dueDate, description } = req.body;
+    let { title, dueDate, description, categories } = req.body;
     let creator = req.userId;
     //Storing task in DB.
-    let task = new Task({ title, dueDate, description, creator });
+    let task = new Task({ title, dueDate, description, creator, categories });
     task
         .save()
         .then((result) => {
@@ -120,7 +120,7 @@ module.exports.editTask = (req, res, next) => {
     }
 
     let { id } = req.params;
-    let { title, dueDate, description, isCompleted } = req.body;
+    let { title, dueDate, description, isCompleted, categories } = req.body;
     Task.findById(id)
         .then((task) => {
             if (!task) {
@@ -136,6 +136,7 @@ module.exports.editTask = (req, res, next) => {
                 task.dueDate = dueDate;
             if (isCompleted == true || isCompleted == false)
                 task.isCompleted = isCompleted;
+            task.categories = categories;
             return task.save();
         })
         .then((task) => {

@@ -7,12 +7,15 @@ import { connect } from "react-redux";
 import { getData, hasKey } from "../../utils/storage";
 import { useNavigate } from "react-router-dom";
 import LoadingPage from "../loading/LoadingPage";
+import CategoriesBar from "../../components/filters/CategoriesBar";
 
 const HomePage = ({ userName, logout, login, resetUser }) => {
     // declarations...
     let navigator = useNavigate();
     const [loading, setLoading] = useState(true);
     const [tasks, setTasks] = useState([]);
+    const [allTasks, setAllTasks] = useState([]);
+    const [activeCategory, setActiveCategory] = useState('All');
 
     useEffect(() => {
         setLoading(true);
@@ -26,7 +29,14 @@ const HomePage = ({ userName, logout, login, resetUser }) => {
                 },
             }).then(res => res.json()).then(data => {
                 console.log("Tasks Data:", data);
-                setTasks(data?.tasks);
+                return data?.tasks;
+            }).then(tasks => {
+                setAllTasks(tasks);
+                tasks = tasks?.filter(ele => {
+                    if (activeCategory === 'All') return true;
+                    return ele?.categories.indexOf(activeCategory) !== -1;
+                });
+                setTasks(tasks);
                 setLoading(false);
             }).catch(err => {
                 console.log("Error in fetch items:", err);
@@ -40,10 +50,18 @@ const HomePage = ({ userName, logout, login, resetUser }) => {
         }
         fetchItems();
     }, []);
+    useEffect(() => {
+        let _tasks = allTasks?.filter(ele => {
+            if (activeCategory === 'All') return true;
+            return ele?.categories.indexOf(activeCategory) !== -1;
+        });
+        setTasks(_tasks);
+    }, [activeCategory]);
 
     return (
         <>
             <MainNavbar logout={logout} login={login} />
+            <CategoriesBar activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
             <Container id="TasksContainer"
                 style={{ display: "flex", flexWrap: "wrap", marginTop: "5rem" }}
             >
